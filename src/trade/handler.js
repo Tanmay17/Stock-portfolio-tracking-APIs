@@ -1,6 +1,16 @@
 const { Service: { TradeService } } = require( '../../lib' );
+const { validationResult } = require( 'express-validator' );
 
 const addTrade = async ( req, res ) => {
+
+  const errors = validationResult( req );
+
+  if ( !errors.isEmpty() ) {
+        
+    return res.status( 400 ).json( { errors: errors.array() } );
+        
+  }
+  
   try {
     const { tickerSymbol, sharesQty, type } = req.body;
   
@@ -11,22 +21,31 @@ const addTrade = async ( req, res ) => {
     if ( !trade ) {
 
       console.error( `POST /trade => Some error occured while adding trade for Ticker( ${tickerSymbol} ) of type: ${type}` );
-      return res.send( { message: 'Unable to add the ticker' } ).sendStatus( 422 );
+      return res.status( 422 ).json( { message: 'Unable to add the ticker' } );
 
     }
     console.log( `POST /trade => Added trade of ${sharesQty} Ticker( ${tickerSymbol} ) type: ${type}` );
 
-    return res.sendStatus( 200 ).send( trade );
+    return res.status( 200 ).json( { data: trade } );
 
-  } catch (err) {
+  } catch ( err ) {
 
     console.error( 'POST /trade =>', err.message );
-    res.sendStatus( 500 );
+    return res.status( 500 );
 
   }
 };
 
 const removeTrade = async ( req, res ) => {
+
+  const errors = validationResult( req );
+
+  if ( !errors.isEmpty() ) {
+        
+    return res.status( 400 ).json( { errors: errors.array() } );
+        
+  }
+
   try {
 
     const tradeId = req.params.id;
@@ -37,22 +56,31 @@ const removeTrade = async ( req, res ) => {
     if (!deletedTrade) {
 
       console.error( `DELETE /trade/:id => Some error occured while deleting trade( ${tradeId} )` );
-      return res.send( { message: 'Unable to delete the trade' } ).sendStatus( 422 );
+      return res.status( 422 ).json( { message: 'Unable to delete the trade' } );
     
     }
     console.log( `DELETE /trade/:id => Deleted trade( ${tradeId} )` );
     
-    return res.sendStatus( 200 ).send( deletedTrade );
+    return res.status( 200 ).json( { data: deletedTrade } );
   
   } catch ( err ) {
 
     console.error( 'DELETE /trade/:id =>', err.message );
-    res.sendStatus( 500 );
+    return res.status( 500 );
 
   }
 };
 
 const updateTrade = async ( req, res ) => {
+
+  const errors = validationResult( req );
+
+  if ( !errors.isEmpty() ) {
+        
+    return res.status( 400 ).json( { errors: errors.array() } );
+        
+  }
+
   try {
     const { id } = req.params;
     const data = req.body;
@@ -64,16 +92,16 @@ const updateTrade = async ( req, res ) => {
     if ( !updatedTrade ) {
 
       console.error( `PUT /trade/:id => Some error occured while updating trade( ${id} )` );
-      return res.send( { message: 'Unable to update the trade' } ).sendStatus( 422 );
+      return res.status( 422 ).json( { message: 'Unable to update the trade' } );
 
     }
 
-    return res.status( 200 ).json( updatedTrade );
+    return res.status( 200 ).json( { data: updatedTrade } );
 
   } catch ( err ) {
 
     console.error( 'PUT /trade/:id =>', err.message );
-    res.sendStatus( 500 );
+    return res.status( 500 );
 
   }
 };
@@ -89,16 +117,16 @@ const fetchAllTrades = async ( req, res ) => {
     if ( !tradesData ) {
 
       console.error( `GET /trade => Some error occured while fetching trades` );
-      return res.send( { message: 'Unable to fetch trades' } ).sendStatus( 422 );
+      return res.status( 422 ).json( { message: 'Unable to fetch trades' } );
 
     }
 
-    return res.status( 200 ).json( tradesData );
+    return res.status( 200 ).json( { data: tradesData } );
     
   } catch ( err ) {
 
     console.error( 'GET /trade =>', err.message );
-    res.sendStatus( 500 );
+    return res.status( 500 );
 
   }
 }
@@ -114,16 +142,16 @@ const fetchPortfolio = async ( req, res ) => {
     if ( !portfolioData ) {
 
       console.error( `GET /portfolio => Some error occured while fetching portfolio` );
-      return res.send( { message: 'Unable to fetch portfolio' } ).sendStatus( 422 );
+      return res.status( 422 ).json( { message: 'Unable to fetch portfolio' } );
 
     }
 
-    return res.status( 200 ).json( portfolioData );
+    return res.status( 200 ).json( { data: portfolioData } );
     
   } catch ( err ) {
 
     console.error( 'GET /portfolio =>', err.message );
-    res.sendStatus( 500 );
+    return res.status( 500 );
 
   }
 }
@@ -141,7 +169,7 @@ const fetchReturns = async ( req, res ) => {
   } catch ( err ) {
 
     console.error( 'GET /returns =>', err.message );
-    res.sendStatus( 500 );
+    return res.status( 500 );
 
   }
 }
