@@ -2,7 +2,7 @@ const express = require( 'express' );
 const mongoose = require( 'mongoose' );
 const bodyParser = require( 'body-parser' );
 const port = process.env.PORT || 3000;
-const mongoURL = process.env.MONGO_URL || 'mongodb://localhost:27017/smallcase';
+const mongoURL = process.env.MONGO_URL || 'mongodb://localhost:27017/portfolio';
 
 const app = express()
 const routes = require( './src/trade/routes' );
